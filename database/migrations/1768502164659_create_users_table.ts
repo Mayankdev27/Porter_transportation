@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('name').nullable()
       table.string('email', 254).notNullable().unique()
-      table.integer('mobile',10).notNullable()
+      table.string('mobile',50).notNullable()
       table.enum('role',['user','driver']).notNullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import Booking from './booking.js'
+import Driver from './driver.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -19,7 +20,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare name: string | null
 
   @column()
-  declare mobile: number
+  declare mobile: string
 
   @column()
   declare email: string
@@ -37,4 +38,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
     foreignKey: 'user_id',
   })
   declare bookings: HasMany<typeof Booking>
+
+  @hasOne(() => Driver, {
+    foreignKey: 'user_id',
+  })
+  declare driver: HasOne<typeof Driver>
 }

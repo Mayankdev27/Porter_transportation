@@ -1,20 +1,23 @@
-import Driver from '#models/driver'
-import { drivers } from '@adonisjs/core/hash'
 import type { HttpContext } from '@adonisjs/core/http'
+import DriverService from '#services/driver_service'
+import { createDriverValidator } from '#validators/driver'
 
 export default class DriversController {
-    async store({request,response}:HttpContext){
-        const data  = request.only([ 'user_id', 'license_no', 'is_available' ])
+  private driverService = new DriverService()
 
-        await Driver.create({
-              
-            ...data
-        })
-
-        return response.json({
-            "message":"Driver Created successfully",
-             data,
-        })
-   
+  async store({ request, response }: HttpContext) {
+    try {
+      const data = await request.validateUsing(createDriverValidator)
+      const driver = await this.driverService.createDriver(data)
+      return response.status(201).json({
+        message: 'Driver created successfully',
+        driver,
+      })
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Failed to create driver',
+        error
+      })
     }
+  }
 }
